@@ -22,3 +22,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# Large media files (GitHub 100MB limit)
+*.mp4
+*.mov
+*.avi

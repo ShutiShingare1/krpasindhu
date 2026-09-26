@@ -6,6 +6,10 @@ node_modules/
 .env
 .env.local
 .env.production
+.env.production.local
+client/.env
+client/.env.local
+client/.env.production
 
 # Build Outputs
 dist/
@@ -27,4 +31,5 @@ Thumbs.db
 *.mp4
 *.mov
 *.avi
-"krupasindhu website.mp4" 
+"krupasindhu website.mp4"
+

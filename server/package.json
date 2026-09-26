@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Backend server for Krupa Sindhu Advertising & Software Pvt. Ltd.",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",

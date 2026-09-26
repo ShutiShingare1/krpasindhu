@@ -83,7 +83,7 @@ const submitInternshipApplication = async (req, res, next) => {
 
     let resumeUrl = '';
     if (req.file) {
-      resumeUrl = `/uploads/${req.file.filename}`;
+      resumeUrl = req.file.filename ? `/uploads/${req.file.filename}` : `[uploaded:${req.file.originalname}]`;
     }
 
     const applicationId = `KS-INT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;

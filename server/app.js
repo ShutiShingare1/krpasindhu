@@ -21,22 +21,29 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
+// Trust Render / Vercel reverse proxy — required for express-rate-limit to use real client IP
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 
-// Allow CORS for local development and LAN network devices
+// CORS — restrict to CLIENT_URL in production, open in development
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.CLIENT_URL].filter(Boolean)
+  : true; // allow all in dev
+
 app.use(cors({
-  origin: true,
+  origin: allowedOrigins,
   credentials: true
 }));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static uploads
+// Serve static uploads (only useful when running locally; on Render files are ephemeral)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health Check API
@@ -63,6 +70,17 @@ app.use('/api/admin', adminRoutes);
 // 404 Handler for undefined API routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ success: false, error: 'API endpoint not found' });
+});
+
+// Multer error handler — must be BEFORE the general errorHandler
+app.use((err, req, res, next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ success: false, error: 'File too large. Maximum allowed size is 5MB.' });
+  }
+  if (err.message && err.message.includes('Invalid file type')) {
+    return res.status(400).json({ success: false, error: err.message });
+  }
+  next(err);
 });
 
 // Centralized Error Handling Middleware

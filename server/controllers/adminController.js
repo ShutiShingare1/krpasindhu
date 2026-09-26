@@ -19,7 +19,9 @@ const getDatabaseOverview = async (req, res, next) => {
     const isConnected = mongoose.connection.readyState === 1;
 
     let stats = {
-      connection: isConnected ? 'Connected to Local MongoDB (127.0.0.1:27017/krupasindhu)' : 'Offline / Memory Fallback Active',
+      connection: isConnected
+        ? `Connected to MongoDB (${mongoose.connection.host}/${mongoose.connection.name})`
+        : 'Offline / Memory Fallback Active',
       dbName: isConnected ? mongoose.connection.name : 'krupasindhu',
       collections: {}
     };
@@ -62,7 +64,7 @@ const triggerDatabaseSeed = async (req, res, next) => {
     if (!isConnected) {
       return res.status(400).json({
         success: false,
-        error: 'MongoDB is currently not connected on 127.0.0.1:27017. Please start MongoDB service to seed.'
+        error: 'MongoDB is currently not connected. Please ensure MONGODB_URI is set and the database is reachable.'
       });
     }
 

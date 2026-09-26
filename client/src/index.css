@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans selection:bg-brand-red selection:text-white;
+  }
+}
+
+/* Custom transitions and scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-navy-card rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-red;
+}
+
+/* Card hover glow */
+.card-hover-effect {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-navy-accent/10;
+}
+
+/* Gradient text utilities */
+.gradient-text-red {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-red via-red-600 to-rose-700;
+}
+
+.gradient-text-gold {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-brand-gold to-yellow-500;
+}

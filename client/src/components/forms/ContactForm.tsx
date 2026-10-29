@@ -1,9 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { api } from '../../services/api';
 
 export const ContactForm: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  useEffect(() => {
+    const serviceParam = searchParams.get('service');
+    const productParam = searchParams.get('product');
+    if (serviceParam) {
+      setFormData(prev => ({
+        ...prev,
+        message: prev.message || `Hello, I would like to inquire about your service: "${serviceParam}". Please share details on deliverables, timeline, and pricing.`
+      }));
+    } else if (productParam) {
+      setFormData(prev => ({
+        ...prev,
+        message: prev.message || `Hello, I would like to request a demo and pricing details for the product: "${productParam}".`
+      }));
+    }
+  }, [searchParams]);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');

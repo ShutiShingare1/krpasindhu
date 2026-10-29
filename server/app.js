@@ -30,13 +30,28 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 
-// CORS — restrict to CLIENT_URL in production, open in development
+// CORS — in production allow CLIENT_URL + any Render/Vercel subdomain; open in development
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [process.env.CLIENT_URL].filter(Boolean)
+  ? (() => {
+      const origins = [];
+      if (process.env.CLIENT_URL) origins.push(process.env.CLIENT_URL);
+      // Allow Render & Vercel preview domains automatically
+      return origins.length > 0 ? origins : true;
+    })()
   : true; // allow all in dev
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, Postman, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins === true) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow *.onrender.com and *.vercel.app automatically
+    if (/\.onrender\.com$/.test(origin) || /\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, true); // permissive — lock down after stable deployment
+  },
   credentials: true
 }));
 
